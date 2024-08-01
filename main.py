@@ -4,7 +4,7 @@ import numpy as np
 import streamlit as st
 import openpyxl
 
-file_path = "20240801 Children's database - June Assessments - Main - School Anonymized.xlsx"
+file_path = "20240801 Children's database - June Assessments - Main - School Anonymized 2.xlsx"
 sheet_name = "Main"
 children_orig = pd.read_excel(file_path, sheet_name=sheet_name)
 
@@ -223,7 +223,6 @@ st.image("Data site banners-24b.jpg")
 # SCHOOL IMPROVEMENT COMPARING SCHOOLS
 
 st.header("School Improvement Comparisons")
-st.info("Clarkson children very good progress relative to most of Masi's schools. Especially considering the challenges rural area schools face. The Grade R's did excellent, which is really important for the future. The ECDCs did terrible.")
 
 metric_choice = st.selectbox('Select an Assessment:', ('Standard', 'Raw Data'))
 
@@ -232,7 +231,7 @@ if metric_choice == 'Standard':
 else:
     metric = 'June - Total Improvement - Actual'
 
-grade_choice = st.selectbox('Select a Grade:', ('ECD', 'Grade R', 'Grade 1', 'Grade 2', 'Grade 3'), index=1)
+grade_choice = st.selectbox('Select a Grade:', ('Grade R', 'Grade 1', 'Grade 2'), index=1)
 
 if grade_choice == 'ECD':
     filtered_df = children[children['Grade'] == 'PreR']
@@ -242,10 +241,7 @@ else:
 mean_scores = filtered_df.groupby('School')[metric].mean().reset_index()
 
 # Define custom color mapping
-custom_colors = {'Bambino': 'orange', 'Clarkson': 'orange', 'Vukani Day Care': 'orange'}
-
-# Define custom color mapping
-custom_colors = {'Bambino': 'feature', 'Clarkson': 'feature', 'Vukani Day Care': 'feature'}
+custom_colors = {'Sandwater': 'feature'}
 
 # Apply custom colors
 mean_scores['color'] = mean_scores['School'].apply(lambda x: custom_colors.get(x, 'control'))
@@ -269,7 +265,6 @@ with st.container():
 # JANUARY VS JULY ASSESSMENTS
 st.markdown("---")
 st.header("Initial & Midline Assessment Comparisons")
-st.info("Clarkson started from a very low base compared to most Masi schools, however all grades made very good progress. The ECDCs started from a very low base and stayed there.")
 
 assessment_choice = st.selectbox('Select an Assessment:', ('January', 'July'))
 
@@ -278,7 +273,7 @@ if assessment_choice == 'January':
 else:
     metric = 'June - Total Literacy Score'
 
-grade_choice = st.selectbox('Select a Grade:', ('ECD', 'Grade R', 'Grade 1', 'Grade 2', 'Grade 3'))
+grade_choice = st.selectbox('Select a Grade:', ('Grade R', 'Grade 1', 'Grade 2'))
 
 if grade_choice == 'ECD':
     filtered_df = children[children['Grade'] == 'PreR']
@@ -288,7 +283,7 @@ else:
 mean_scores = filtered_df.groupby('School')[metric].mean().reset_index()
 
 # Define custom color mapping
-custom_colors = {'Bambino': 'feature', 'Clarkson': 'feature', 'Vukani Day Care': 'feature'}
+custom_colors = {'Sandwater': 'feature'}
 
 # Apply custom colors
 mean_scores['color'] = mean_scores['School'].apply(lambda x: custom_colors.get(x, 'control'))
@@ -313,9 +308,10 @@ with st.container():
 st.markdown("---")
 st.header("Literacy Skills Gained Per Grade")
 
-grade_choice = st.selectbox('Select a Grade:', ('Grade R', 'Grade 1', 'Grade 2', 'Grade 3'), key='skills')
+grade_choice = st.selectbox('Select a Grade:', ('Grade R', 'Grade 1', 'Grade 2'), key='skills')
 
-filtered_df = children[children['Grade'] == grade_choice]
+df = children[children['School'] == "Sandwater"]
+filtered_df = df[df['Grade'] == grade_choice]
 
 mean_improvements = filtered_df.agg({
     "June - Letter Sounds Improvement": 'mean',
@@ -350,6 +346,6 @@ with st.container():
 # TOP PERFORMING CHILDREN
 st.markdown("---")
 st.header("Top Performing Children")
-df = children[(children['School'] == "Clarkson") & (children['2024 On Programme'] == "Yes") ]
+df = children[(children['School'] == "Sandwater") & (children['2024 On Programme'] == "Yes") ]
 top_performers = df[['Full Name', 'Grade', 'Jan - Total Literacy Score', 'June - Total Literacy Score','June - Total Literacy Score Improvement']].sort_values('June - Total Literacy Score Improvement', ascending=False).head(25)
 st.dataframe(top_performers, height=800)
